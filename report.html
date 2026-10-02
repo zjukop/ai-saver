@@ -34,14 +34,20 @@ ol,ul{margin:8px 0 8px 20px}li{margin:5px 0}
 
 <div id="paywall" class="card lock">
 <div style="font-size:2.4em">🔒</div>
-<h2 style="border:none;text-align:center">完整报告需解锁</h2>
-<p style="color:var(--mut);margin:10px 0 18px">基础对比永久免费；<b style="color:var(--or)">¥9 深度省钱报告</b>含：成本画像 · 分场景路由方案 · 5条节省策略(带预估) · 12个月预测 · 迁移清单 · 中文生态选型表。</p>
-<div style="max-width:340px;margin:0 auto">
-<label>输入你的解锁口令</label>
-<input id="code" placeholder="付款后由爱发电自动发放" onkeydown="if(event.key==='Enter')unlock()">
-<button class="btn" onclick="unlock()">解锁报告</button>
-<p style="margin-top:12px"><a href="https://afdian.net" style="color:var(--ac)">→ 去爱发电 ¥9 购买（自动发口令）</a></p>
-<button class="btn2 noprint" style="margin-top:10px" onclick="previewMode()">先看免费预览</button>
+<h2 style="border:none;text-align:center">完整报告 ¥9 解锁</h2>
+<p style="color:var(--mut);margin:10px 0 16px">基础对比永久免费；<b style="color:var(--or)">¥9 深度省钱报告</b>含：成本画像 · 分场景路由方案 · 5条节省策略(带预估) · 12个月预测 · 迁移清单 · 中文生态选型表。</p>
+<div style="max-width:300px;margin:0 auto">
+<img src="pay-wechat.jpg" alt="微信支付" style="width:100%;border-radius:10px;border:1px solid var(--bd)">
+<p style="color:var(--mut);font-size:.82em;margin:8px 0">微信扫码支付 ¥9</p>
+<button class="btn" onclick="paid()">✅ 我已付款，显示口令</button>
+<div id="codereveal" class="hide" style="margin-top:14px;background:#1c2128;border:1px dashed var(--bd);border-radius:8px;padding:12px">
+口令：<b id="codeval" style="color:var(--gr)">SAVER-ZH-2026</b>
+<br><button class="btn2" style="margin-top:8px" onclick="document.getElementById('code').value=document.getElementById('codeval').textContent;unlock()">填入并解锁</button>
+</div>
+<label style="margin-top:16px">已有口令？直接输入</label>
+<input id="code" placeholder="如 SAVER-ZH-2026" onkeydown="if(event.key==='Enter')unlock()">
+<button class="btn2" style="margin-top:6px;width:100%" onclick="unlock()">解锁报告</button>
+<button class="btn2 noprint" style="margin-top:10px;width:100%" onclick="previewMode()">先看免费预览</button>
 </div>
 </div>
 
@@ -79,8 +85,9 @@ var CODE="SAVER-ZH-2026"; // 爱发电自动发放的口令
 function fmt(n){return n>=10000?(n/10000).toFixed(1)+"万":n.toFixed(2)}
 function unlock(){
   if(document.getElementById('code').value.trim().toUpperCase()===CODE){document.getElementById('paywall').classList.add('hide');document.getElementById('app').classList.remove('hide');render();}
-  else{alert('口令不对。付款后爱发电会自动发送口令，形如 SAVER-...');}
+  else{alert('口令不对。付款后点"我已付款，显示口令"即可看到口令。');}
 }
+function paid(){document.getElementById('codereveal').classList.remove('hide');}
 function previewMode(){document.getElementById('paywall').classList.add('hide');document.getElementById('app').classList.remove('hide');render(true);}
 function render(preview){
   var inp=parseFloat(document.getElementById('in').value)||0,out=parseFloat(document.getElementById('out').value)||0;

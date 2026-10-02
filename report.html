@@ -75,13 +75,23 @@ ol,ul{margin:8px 0 8px 20px}li{margin:5px 0}
 </div>
 
 <script>
-var PRICES={glm52:{n:"glm-5.2",i:0.5,o:2,use:"通用主力，性价比之王"},
- deepseek:{n:"deepseek-chat",i:1,o:2,use:"通用对话/写文"},
- reasoner:{n:"deepseek-reasoner",i:2,o:8,use:"复杂推理/Agent规划"},
- kimi:{n:"kimi",i:2,o:10,use:"超长上下文/文档"},
- minimax:{n:"minimax",i:1,o:3,use:"多模态/语音"},
- glm5:{n:"glm-5",i:0.5,o:2,use:"通用备用"}};
-var CODE="SAVER-ZH-2026"; // 爱发电自动发放的口令
+var PRICES={"glm-5.3-flash":{n:"glm-5.3-flash",i:0.8,o:2.8,use:"最新超值，通用/多模态"},
+ "deepseek-flash":{n:"deepseek-flash",i:2,o:8,use:"超值，通用对话/写文"},
+ "glm-5.3":{n:"glm-5.3",i:8,o:28,use:"最新旗舰，复杂编程/Agent"},
+ "deepseek-v4-pro":{n:"deepseek-v4-pro",i:9,o:27,use:"旗舰，复杂推理"},
+ "qwen3.8-max":{n:"qwen3.8-max",i:14,o:42,use:"阿里旗舰，超长上下文"},
+ "kimi-k3":{n:"kimi-k3",i:21,o:105,use:"月之暗面旗舰，长文"}};
+var CODE="SAVER-ZH-2026"; // 付款后发放的解锁口令
+// 实时价格: 拉 data.json(价格雷达齿轮每日更新)
+fetch('data.json').then(function(r){return r.json()}).then(function(d){
+  if(d&&d.models&&d.models.length){
+    var p={};
+    d.models.filter(function(m){return m.in!=null}).forEach(function(m){p[m.name]={n:m.name,i:m.in,o:m.out,use:m.provider+(String(m.src).indexOf('实时')>-1?' · 实时价':'')}});
+    PRICES=p;
+    var el=document.getElementById('app');
+    if(el&&!el.classList.contains('hide'))render();
+  }
+}).catch(function(){});
 function fmt(n){return n>=10000?(n/10000).toFixed(1)+"万":n.toFixed(2)}
 function unlock(){
   if(document.getElementById('code').value.trim().toUpperCase()===CODE){document.getElementById('paywall').classList.add('hide');document.getElementById('app').classList.remove('hide');render();}
@@ -98,7 +108,7 @@ function render(preview){
   var best=rows[0];
   var save=cur-best.c,pct=cur>0?Math.round(save/cur*100):0;
   // 路由: 按用途选主力
-  var route={"write":"deepseek","agent":"reasoner","long":"kimi","chat":"glm52"}[use];
+  var route={"write":"deepseek-flash","agent":"glm-5.3","long":"qwen3.8-max","chat":"glm-5.3-flash"}[use];
   var rp=PRICES[route],rCost=inp*rp.i+out*rp.o;
   var cacheSave=cur*0.25, mixSave=cur*0.35;
   var h="";
@@ -113,7 +123,7 @@ function render(preview){
     h+="<h2>三、分场景路由方案<span class='tag'>按用途：你选的是"+use+"</span></h2><div class='card'>";
     h+="<div>推荐主力：<b class='good'>"+rp.n+"</b> —— "+rp.use+"</div>";
     h+="<div>该方案月成本 ¥"+fmt(rCost)+"，比你现在省 ¥"+fmt(cur-rCost)+"（省 "+(cur>0?Math.round((cur-rCost)/cur*100):0)+"%）</div>";
-    h+="<div style='color:var(--mut);font-size:.88em;margin-top:8px'>混合路由：简单任务走 glm-5.2（¥0.5/M），复杂任务才上 deepseek-reasoner（¥2/M），中间层用 deepseek-chat。按 70/20/10 分流，可再降 20-30%。</div></div>";
+    h+="<div style='color:var(--mut);font-size:.88em;margin-top:8px'>混合路由：简单任务走 glm-5.3-flash（¥0.8/M），复杂任务才上 glm-5.3 / deepseek-v4-pro（¥8-9/M）。按 70/20/10 分流，可再降 20-30%。</div></div>";
     h+="<h2>四、5 条节省策略（带预估）</h2><ol>";
     h+="<li><b>提示词缓存</b>：把 system prompt / 长上下文缓存复用，输入费降 <b>25%</b>（≈省 ¥"+fmt(cacheSave)+"/月）。国产网关多支持 prompt cache。</li>";
     h+="<li><b>混合路由</b>：按任务难度分流到不同价位模型，整体降 <b>35%</b>（≈省 ¥"+fmt(mixSave)+"/月）。</li>";
@@ -127,7 +137,7 @@ function render(preview){
     h+="<tr><td class='good'>+缓存/路由优化</td><td class='good'>¥"+fmt(opt)+"</td><td class='good'>¥"+fmt(opt*12)+"</td></tr>";
     h+="</table><div class='card'>12个月累计可省 <b class='big'>¥"+fmt(cur*12-opt*12)+"</b></div>";
     h+="<h2>六、迁移清单</h2><ol><li>注册国产模型 API（智谱/DeepSeek/Moonshot），拿到 key</li><li>用 OpenAI 兼容网关统一接入（如 sub2api），一个 key 调所有模型</li><li>按上方路由表配置模型映射</li><li>开启 prompt cache，长 system prompt 打缓存标记</li><li>灰度：先切 20% 流量，对比质量与延迟</li><li>全量切换 + 用本工具每月复算一次</li></ol>";
-    h+="<h2>七、中文生态选型表</h2><table><tr><th>场景</th><th>首选</th><th>理由</th></tr><tr><td>通用/写文</td><td>glm-5.2</td><td>最便宜，质量够</td></tr><tr><td>复杂推理/Agent</td><td>deepseek-reasoner</td><td>推理链强</td></tr><tr><td>超长文档</td><td>kimi</td><td>长上下文</td></tr><tr><td>多模态</td><td>minimax</td><td>音视频</td></tr></table>";
+    h+="<h2>七、中文生态选型表</h2><table><tr><th>场景</th><th>首选</th><th>理由</th></tr><tr><td>通用/写文</td><td>glm-5.3-flash</td><td>最新超值 ¥0.8/2.8</td></tr><tr><td>复杂编程/Agent</td><td>glm-5.3</td><td>最新旗舰，编程+50%</td></tr><tr><td>复杂推理</td><td>deepseek-v4-pro</td><td>推理链强</td></tr><tr><td>超长文档</td><td>qwen3.8-max</td><td>长上下文</td></tr></table>";
   }
   document.getElementById('report').innerHTML=h;
 }

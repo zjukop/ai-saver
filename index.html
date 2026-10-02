@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 省钱器 · 国产大模型成本对比</title>
+<meta name="description" content="输入你的月 token 用量，对比国产大模型(GPT/Claude vs glm/deepseek/kimi)，看每月能省多少。数据来自真实 API 网关。">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--bd:#30363d;--tx:#e6edf3;--mut:#8b949e;--ac:#2f81f7;--gr:#3fb950;--or:#d29922}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC",system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;padding:20px;max-width:820px;margin:0 auto}
+h1{font-size:1.7em;margin-bottom:6px}
+.sub{color:var(--mut);font-size:.92em;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:18px;margin-bottom:16px}
+label{display:block;font-size:.85em;color:var(--mut);margin-bottom:4px}
+.row{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.row>div{flex:1;min-width:140px}
+input,select{width:100%;background:#0d1117;border:1px solid var(--bd);color:var(--tx);border-radius:7px;padding:10px 12px;font-size:1em}
+input:focus,select:focus{outline:none;border-color:var(--ac)}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.presets button{background:#21262d;border:1px solid var(--bd);color:var(--tx);border-radius:20px;padding:6px 14px;font-size:.82em;cursor:pointer}
+.presets button:hover{border-color:var(--ac)}
+.btn{background:var(--ac);color:#fff;border:none;border-radius:8px;padding:12px 24px;font-size:1.05em;cursor:pointer;width:100%;font-weight:600}
+.btn:hover{background:#1f6feb}
+.result{margin-top:18px}
+.big{font-size:2.2em;font-weight:800;color:var(--gr)}
+.big small{font-size:.5em;color:var(--mut);font-weight:400}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:.9em}
+th,td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--bd)}
+th{color:var(--mut);font-weight:500}
+.cheapest{color:var(--gr);font-weight:700}
+.orr{color:var(--or)}
+.cta{margin-top:20px;padding:14px;background:#1c2128;border:1px dashed var(--bd);border-radius:8px;font-size:.9em}
+.cta b{color:var(--or)}
+a{color:var(--ac);text-decoration:none}
+.note{color:var(--mut);font-size:.78em;margin-top:18px;text-align:center}
+</style>
+</head>
+<body>
+<h1>🦞 AI 省钱器</h1>
+<div class="sub">输入你的月 token 用量 → 对比国产大模型 vs GPT/Claude → 看每月省多少。价格来自真实 API 网关，不瞎编。</div>
+
+<div class="card">
+<div class="presets">
+<button onclick="preset(1,0.5)">写文 1M/0.5M</button>
+<button onclick="preset(5,1)">Agent 5M/1M</button>
+<button onclick="preset(2,2)">长文 2M/2M</button>
+<button onclick="preset(20,5)">重度 20M/5M</button>
+</div>
+<div class="row">
+<div><label>月输入 tokens (百万)</label><input id="in" type="number" value="5" step="0.1" min="0"></div>
+<div><label>月输出 tokens (百万)</label><input id="out" type="number" value="1" step="0.1" min="0"></div>
+</div>
+<div class="row">
+<div><label>你当前在用 (对比基准)</label>
+<select id="base">
+<option value="210,420">GPT-4 ($30/$60 per M)</option>
+<option value="105,525">Claude Opus ($15/$75)</option>
+<option value="35,105" selected>GPT-4o ($5/$15)</option>
+<option value="21,105">Claude Sonnet ($3/$15)</option>
+<option value="1.75,8.75">Claude Haiku ($0.25/$1.25)</option>
+</select></div>
+</div>
+<button class="btn" onclick="calc()">算算能省多少</button>
+<div class="result" id="res"></div>
+</div>
+
+<div class="cta">
+<b>进阶版 ¥9/月：</b>一键部署到你自己的 API 网关(sub2api)，实时监控你的真实用量+成本，自动推荐最省路由+优化建议。
+<br><span style="color:var(--mut)">先占座：进阶版开发中，<a href="https://github.com/zjukop/ai-saver/issues/1">留言预订</a> / <a href="https://afdian.net">赞助催更</a>。基础对比永久免费。</span>
+</div>
+
+<div class="note">数据源：sub2api 真实网关价 · 汇率按 ¥7/$ · Made by 一个赛博木匠</div>
+
+<script>
+const MODELS=[
+{name:"glm-5.2",in:0.5,out:2,tag:"智谱·主力"},
+{name:"deepseek-chat",in:1,out:2,tag:"DeepSeek·通用"},
+{name:"deepseek-reasoner",in:2,out:8,tag:"DeepSeek·推理"},
+{name:"kimi",in:2,out:10,tag:"月之暗面"},
+];
+function preset(i,o){document.getElementById('in').value=i;document.getElementById('out').value=o;calc()}
+function fmt(n){return n>=10000?(n/10000).toFixed(1)+'万':n.toFixed(2)}
+function calc(){
+  const inp=parseFloat(document.getElementById('in').value)||0;
+  const out=parseFloat(document.getElementById('out').value)||0;
+  const [bi,bo]=document.getElementById('base').value.split(',').map(Number);
+  const base=inp*bi+out*bo;
+  const rows=MODELS.map(m=>({n:m.n,t:m.tag,c:inp*m.in+out*m.out})).sort((a,b)=>a.c-b.c);
+  const best=rows[0];
+  const save=base-best.c;
+  const pct=base>0?(save/base*100).toFixed(0):0;
+  let h=`<div>当前基准月成本 <b style="color:var(--or)">¥${fmt(base)}</b></div>`;
+  h+=`<div class="big">每月省 ¥${fmt(save)} <small>(省 ${pct}%)</small></div>`;
+  h+=`<div style="color:var(--mut);font-size:.85em;margin-bottom:10px">最省：<span class="cheapest">${best.n}</span> (${best.t}) ¥${fmt(best.c)}/月</div>`;
+  h+=`<table><tr><th>模型</th><th>定位</th><th>月成本</th><th>vs 基准</th></tr>`;
+  rows.forEach(r=>{
+    const s=base-r.c;
+    h+=`<tr><td>${r.n}</td><td>${r.t}</td><td>¥${fmt(r.c)}</td><td class="${r===best?'cheapest':''}">省 ¥${fmt(s)}</td></tr>`;
+  });
+  h+=`</table>`;
+  document.getElementById('res').innerHTML=h;
+}
+calc();
+</script>
+</body>
+</html>

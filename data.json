@@ -41,10 +41,10 @@
     },
     {
       "name": "deepseek-flash",
-      "in": 2,
-      "out": 8,
+      "in": 2.0,
+      "out": 8.0,
       "provider": "DeepSeek",
-      "src": "兜底表"
+      "src": "DeepSeek官方·实时"
     },
     {
       "name": "qwen3.6-plus",
@@ -97,10 +97,10 @@
     },
     {
       "name": "deepseek-v4-pro",
-      "in": 9,
-      "out": 27,
+      "in": 9.0,
+      "out": 27.0,
       "provider": "DeepSeek",
-      "src": "兜底表"
+      "src": "DeepSeek官方·实时"
     },
     {
       "name": "qwen3.7-max",

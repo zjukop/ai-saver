@@ -38,7 +38,7 @@ a{color:var(--ac);text-decoration:none}
 </head>
 <body>
 <h1>🦞 AI 省钱器</h1>
-<div class="sub">输入你的月 token 用量 → 对比国产大模型 vs GPT/Claude → 看每月省多少。价格来自真实 API 网关，不瞎编。</div>
+<div class="sub">输入你的月 token 用量 → 对比国产大模型 vs GPT/Claude → 看每月省多少。<b>2026-10 最新模型</b>（GLM-5.3 / DeepSeek-V4 / Qwen3.8-Max / Kimi-K3），价格用各家官方定价，不瞎编。</div>
 
 <div class="card">
 <div class="presets">
@@ -71,15 +71,25 @@ a{color:var(--ac);text-decoration:none}
 <br><span style="color:var(--mut);font-size:.85em">爱发电 ¥9 付款后自动发放解锁口令 · 基础对比永久免费</span>
 </div>
 
-<div class="note">数据源：sub2api 真实网关价 · 汇率按 ¥7/$ · Made by 一个赛博木匠</div>
+<div class="note">数据源：智谱/DeepSeek/阿里/月之暗面官方定价 · 汇率按 ¥7/$ · DeepSeek 按高峰价<span id="upd"></span> · Made by 一个赛博木匠</div>
 
 <script>
-const MODELS=[
-{name:"glm-5.2",in:0.5,out:2,tag:"智谱·主力"},
-{name:"deepseek-chat",in:1,out:2,tag:"DeepSeek·通用"},
-{name:"deepseek-reasoner",in:2,out:8,tag:"DeepSeek·推理"},
-{name:"kimi",in:2,out:10,tag:"月之暗面"},
+var MODELS=[
+{name:"glm-5.3-flash",in:0.8,out:2.8,tag:"智谱"},
+{name:"deepseek-flash",in:2,out:8,tag:"DeepSeek"},
+{name:"glm-5.3",in:8,out:28,tag:"智谱"},
+{name:"deepseek-v4-pro",in:9,out:27,tag:"DeepSeek"},
+{name:"qwen3.8-max",in:14,out:42,tag:"阿里"},
+{name:"kimi-k3",in:21,out:105,tag:"月之暗面"},
 ];
+// 实时价格: 拉 data.json(价格雷达齿轮每日更新) → 失败则用上面兜底
+fetch('data.json').then(function(r){return r.json()}).then(function(d){
+  if(d&&d.models&&d.models.length){
+    MODELS=d.models.filter(function(m){return m.in!=null}).map(function(m){return {name:m.name,in:m.in,out:m.out,tag:m.provider+(String(m.src).indexOf('实时')>-1?'·实时':'')}});
+    var u=document.getElementById('upd');if(u)u.textContent=' · 价格实时更新于 '+d.updated;
+    calc();
+  }
+}).catch(function(){});
 function preset(i,o){document.getElementById('in').value=i;document.getElementById('out').value=o;calc()}
 function fmt(n){return n>=10000?(n/10000).toFixed(1)+'万':n.toFixed(2)}
 function calc(){

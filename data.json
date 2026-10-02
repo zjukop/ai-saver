@@ -1,0 +1,134 @@
+{
+  "updated": "2026-10-02 13:39",
+  "unit": "元/百万 tokens (输入/输出)",
+  "note": "智谱/DeepSeek 官方页自动抓取; 其余为兜底表人工维护。DeepSeek 取高峰价。",
+  "gateway": [
+    "auto",
+    "deepseek",
+    "deepseek-v4-pro",
+    "glm",
+    "glm-5.1",
+    "glm-5.2",
+    "kimi",
+    "minimax",
+    "minimax-m3",
+    "qwen",
+    "qwen3.6-plus",
+    "qwen3.7-max",
+    "qwen3.8-max"
+  ],
+  "models": [
+    {
+      "name": "glm-5.3-flash",
+      "in": 0.8,
+      "out": 2.8,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "minimax-m2.7",
+      "in": 1,
+      "out": 3,
+      "provider": "MiniMax",
+      "src": "兜底表"
+    },
+    {
+      "name": "glm-5.3-flashx",
+      "in": 2.0,
+      "out": 7.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "deepseek-flash",
+      "in": 2,
+      "out": 8,
+      "provider": "DeepSeek",
+      "src": "兜底表"
+    },
+    {
+      "name": "qwen3.6-plus",
+      "in": 4,
+      "out": 12,
+      "provider": "阿里",
+      "src": "兜底表"
+    },
+    {
+      "name": "glm-5",
+      "in": 6.0,
+      "out": 22.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "glm-5-turbo",
+      "in": 7.0,
+      "out": 26.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "glm-5v-turbo",
+      "in": 7.0,
+      "out": 26.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "glm-5.3",
+      "in": 8.0,
+      "out": 28.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "glm-5.2",
+      "in": 8.0,
+      "out": 28.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "glm-5.1",
+      "in": 8.0,
+      "out": 28.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "deepseek-v4-pro",
+      "in": 9,
+      "out": 27,
+      "provider": "DeepSeek",
+      "src": "兜底表"
+    },
+    {
+      "name": "qwen3.7-max",
+      "in": 10,
+      "out": 30,
+      "provider": "阿里",
+      "src": "兜底表"
+    },
+    {
+      "name": "qwen3.8-max",
+      "in": 14,
+      "out": 42,
+      "provider": "阿里",
+      "src": "兜底表"
+    },
+    {
+      "name": "kimi-k3",
+      "in": 21,
+      "out": 105,
+      "provider": "月之暗面",
+      "src": "兜底表"
+    },
+    {
+      "name": "kimi-k2.7-code",
+      "in": 21,
+      "out": 105,
+      "provider": "月之暗面",
+      "src": "兜底表"
+    }
+  ]
+}

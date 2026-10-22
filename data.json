@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-21 07:30",
+  "updated": "2026-10-23 07:30",
   "unit": "元/百万 tokens (输入/输出)",
   "note": "智谱/DeepSeek 官方页自动抓取; 其余为兜底表人工维护。DeepSeek 取高峰价。",
   "gateway": [
@@ -34,6 +34,13 @@
     },
     {
       "name": "glm-5.3-flashx",
+      "in": 2.0,
+      "out": 7.0,
+      "provider": "智谱",
+      "src": "智谱官方·实时"
+    },
+    {
+      "name": "glm-5.3-flashx-legal",
       "in": 2.0,
       "out": 7.0,
       "provider": "智谱",

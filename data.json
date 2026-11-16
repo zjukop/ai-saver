@@ -1,22 +1,8 @@
 {
-  "updated": "2026-11-16 07:30",
+  "updated": "2026-11-17 07:30",
   "unit": "元/百万 tokens (输入/输出)",
   "note": "智谱/DeepSeek 官方页自动抓取; 其余为兜底表人工维护。DeepSeek 取高峰价。",
-  "gateway": [
-    "auto",
-    "deepseek",
-    "deepseek-v4-pro",
-    "glm",
-    "glm-5.1",
-    "glm-5.2",
-    "kimi",
-    "minimax",
-    "minimax-m3",
-    "qwen",
-    "qwen3.6-plus",
-    "qwen3.7-max",
-    "qwen3.8-max"
-  ],
+  "gateway": [],
   "models": [
     {
       "name": "glm-5.3-flash",
